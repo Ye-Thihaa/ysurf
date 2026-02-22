@@ -21,7 +21,7 @@ const featuredProjects = [
     title: "KeyBurm",
     description:
       "Typing practice website supporting Myanmar & English language modes, with multiple test modes including time-based and word-based challenges.",
-    tech: ["React", "TypeScript", "TailwindCSS" ,"Node.js"],
+    tech: ["React", "TypeScript", "TailwindCSS", "Node.js"],
     github: "https://github.com/Ye-Thihaa/KeyBurm.git",
     demo: "https://key-burm.vercel.app/",
   },
@@ -43,20 +43,16 @@ const featuredProjects = [
   },
 ];
 
-const labyrinthPatternStyle = {
-  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='none'/%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1' opacity='0.18'%3E%3Crect x='2' y='2' width='22' height='14' rx='1'/%3E%3Crect x='30' y='2' width='14' height='22' rx='1'/%3E%3Crect x='50' y='2' width='28' height='14' rx='1'/%3E%3Crect x='2' y='22' width='14' height='22' rx='1'/%3E%3Crect x='22' y='22' width='22' height='14' rx='1'/%3E%3Crect x='50' y='22' width='14' height='22' rx='1'/%3E%3Crect x='68' y='22' width='10' height='14' rx='1'/%3E%3Crect x='2' y='50' width='28' height='14' rx='1'/%3E%3Crect x='36' y='44' width='14' height='22' rx='1'/%3E%3Crect x='56' y='50' width='22' height='14' rx='1'/%3E%3Crect x='2' y='66' width='14' height='12' rx='1'/%3E%3Crect x='22' y='60' width='22' height='18' rx='1'/%3E%3Crect x='56' y='66' width='22' height='12' rx='1'/%3E%3C/g%3E%3C/svg%3E")`,
-  backgroundSize: "80px 80px",
-};
-
 const Index = () => {
   return (
     <Layout>
       <ScrollProgress />
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{ backgroundImage: `url(${heroBg})` }} />
-        <div className="absolute inset-0 opacity-30" style={labyrinthPatternStyle} />
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{ backgroundImage: `url(${heroBg})` }}
+        />
 
         <div className="container mx-auto px-4 relative z-10">
           <AnimatedHeroTitle text="Ysurf" />
@@ -146,9 +142,12 @@ const Index = () => {
             <p className="text-primary-foreground/70 mb-6 max-w-md mx-auto">
               Looking for a software engineer who writes clean code and delivers results?
             </p>
-            <Button variant="outline" size="lg"
+            <Button
+              variant="outline"
+              size="lg"
               className="border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground hover:text-primary"
-              asChild>
+              asChild
+            >
               <Link to="/appointment">Book a Consultation</Link>
             </Button>
           </FadeInSection>

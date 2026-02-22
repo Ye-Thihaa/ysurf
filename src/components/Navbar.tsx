@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import FloatingYModel from "./FloatingYModel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Sun, Moon } from "lucide-react";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -13,6 +14,28 @@ const navItems = [
 const Navbar = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    // Read from localStorage or default to system preference
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("theme");
+      if (stored === "dark" || stored === "light") return stored;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    return "light";
+  });
+
+  // Apply theme class to <html> and persist
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   return (
     <>
@@ -46,18 +69,37 @@ const Navbar = () => {
                 </Link>
               );
             })}
+
+            {/* Theme toggle — desktop */}
+            <button
+              onClick={toggleTheme}
+              className="text-muted-foreground hover:text-foreground transition-colors duration-150"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
           </div>
 
-          {/* Hamburger — mobile only */}
-          <button
-            onClick={() => setOpen(true)}
-            className="flex md:hidden flex-col gap-1.5 p-1 group"
-            aria-label="Open menu"
-          >
-            <span className="block w-6 h-px bg-foreground transition-all duration-200 group-hover:w-4" />
-            <span className="block w-4 h-px bg-foreground transition-all duration-200 group-hover:w-6" />
-            <span className="block w-5 h-px bg-foreground transition-all duration-200 group-hover:w-4" />
-          </button>
+          {/* Right side — mobile: theme toggle + hamburger */}
+          <div className="flex md:hidden items-center gap-4">
+            <button
+              onClick={toggleTheme}
+              className="text-muted-foreground hover:text-foreground transition-colors duration-150"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+
+            <button
+              onClick={() => setOpen(true)}
+              className="flex flex-col gap-1.5 p-1 group"
+              aria-label="Open menu"
+            >
+              <span className="block w-6 h-px bg-foreground transition-all duration-200 group-hover:w-4" />
+              <span className="block w-4 h-px bg-foreground transition-all duration-200 group-hover:w-6" />
+              <span className="block w-5 h-px bg-foreground transition-all duration-200 group-hover:w-4" />
+            </button>
+          </div>
         </div>
       </nav>
 

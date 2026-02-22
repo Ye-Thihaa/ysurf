@@ -1,14 +1,30 @@
 import { Link } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import FadeInSection from "@/components/FadeInSection";
 import ScrollProgress from "@/components/ScrollProgress";
 import { animate, stagger } from "animejs";
 
+// ── Theme hook ────────────────────────────────────────────────────────────────
+const useIsDark = () => {
+  const [isDark, setIsDark] = useState(
+    () => typeof window !== "undefined" && document.documentElement.classList.contains("dark")
+  );
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, { attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+  return isDark;
+};
+
 // ── Floating orb / blob 3D-ish canvas decoration ──────────────────────────────
 const WebOrb = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isDark = useIsDark();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -21,7 +37,6 @@ const WebOrb = () => {
     canvas.width = W;
     canvas.height = H;
 
-    // Wireframe sphere points
     const RINGS = 12;
     const SEGS = 24;
     const R = Math.min(W, H) * 0.38;
@@ -44,16 +59,18 @@ const WebOrb = () => {
     };
 
     const rotate = (x: number, y: number, z: number, rx: number, ry: number) => {
-      // rotateY
       const cosY = Math.cos(ry), sinY = Math.sin(ry);
       let nx = x * cosY + z * sinY;
       let nz = -x * sinY + z * cosY;
-      // rotateX
       const cosX = Math.cos(rx), sinX = Math.sin(rx);
       let ny = y * cosX - nz * sinX;
       nz = y * sinX + nz * cosX;
       return { x: nx, y: ny, z: nz };
     };
+
+    // Use dark/light-aware color
+    // isDark → white lines; light → dark lines
+    const lineColor = isDark ? "180,180,200" : "40,40,60";
 
     const draw = () => {
       rafId = requestAnimationFrame(draw);
@@ -62,7 +79,6 @@ const WebOrb = () => {
       rotY += 0.004 + mouse.x * 0.01;
       rotX += 0.001 + mouse.y * 0.005;
 
-      // Draw latitude rings
       for (let ri = 1; ri < RINGS; ri++) {
         const phi = (ri / RINGS) * Math.PI;
         const ringR = R * Math.sin(phi);
@@ -74,16 +90,14 @@ const WebOrb = () => {
           const rz3 = ringR * Math.sin(theta);
           const r = rotate(rx3, ringY, rz3, rotX, rotY);
           const p = project(r.x, r.y, r.z);
-          const alpha = (r.z / R + 1) / 2;
           if (si === 0) ctx.moveTo(p.x, p.y);
           else ctx.lineTo(p.x, p.y);
         }
-        ctx.strokeStyle = `rgba(180,180,200,${0.06 + 0.12 * ((ri % 3 === 0) ? 1 : 0.4)})`;
+        ctx.strokeStyle = `rgba(${lineColor},${0.06 + 0.12 * ((ri % 3 === 0) ? 1 : 0.4)})`;
         ctx.lineWidth = 0.7;
         ctx.stroke();
       }
 
-      // Draw longitude lines
       for (let si = 0; si < SEGS; si++) {
         const theta = (si / SEGS) * Math.PI * 2;
         ctx.beginPath();
@@ -97,14 +111,13 @@ const WebOrb = () => {
           if (ri === 0) ctx.moveTo(p.x, p.y);
           else ctx.lineTo(p.x, p.y);
         }
-        ctx.strokeStyle = `rgba(180,180,200,${si % 4 === 0 ? 0.14 : 0.04})`;
+        ctx.strokeStyle = `rgba(${lineColor},${si % 4 === 0 ? 0.18 : 0.06})`;
         ctx.lineWidth = 0.6;
         ctx.stroke();
       }
 
-      // Glowing center dot
       const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, R * 0.5);
-      grad.addColorStop(0, "rgba(255,255,255,0.03)");
+      grad.addColorStop(0, isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)");
       grad.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = grad;
       ctx.beginPath();
@@ -127,7 +140,7 @@ const WebOrb = () => {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [isDark]); // re-run when theme changes
 
   return (
     <canvas
@@ -173,7 +186,6 @@ const ServiceItem = ({ index, title, description, deliverables }: ServiceItemPro
           ease: "spring(1, 70, 12, 0)",
         });
 
-        // Stagger the deliverable items in
         const items = el.querySelectorAll(".deliverable-item");
         animate(Array.from(items), {
           opacity: [0, 1],
@@ -213,14 +225,11 @@ const ServiceItem = ({ index, title, description, deliverables }: ServiceItemPro
       style={{ willChange: "transform, opacity", transformStyle: "preserve-3d" }}
       className="bg-card border border-border rounded-lg p-6 hover:border-foreground/20 transition-colors duration-300"
     >
-      {/* Index */}
       <span className="text-xs font-mono text-muted-foreground/50 mb-3 block">
         0{index + 1}
       </span>
-
       <h3 className="font-heading font-semibold text-foreground text-lg mb-2">{title}</h3>
       <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{description}</p>
-
       <ul className="space-y-2">
         {deliverables.map((d) => (
           <li key={d} className="deliverable-item flex items-start gap-2 text-sm text-foreground/70" style={{ opacity: 0 }}>
@@ -233,7 +242,7 @@ const ServiceItem = ({ index, title, description, deliverables }: ServiceItemPro
   );
 };
 
-// ── Services data — web design & dev only ─────────────────────────────────────
+// ── Services data ─────────────────────────────────────────────────────────────
 const services = [
   {
     title: "UI / UX Design",
@@ -289,9 +298,7 @@ const Services = () => {
 
       {/* ── Hero with 3D orb ───────────────────────────────────────────────── */}
       <section className="relative py-24 overflow-hidden" style={{ minHeight: 420 }}>
-        {/* 3D wireframe globe decoration */}
         <WebOrb />
-
         <div className="container mx-auto px-4 relative z-10">
           <FadeInSection>
             <p className="font-mono text-xs text-muted-foreground tracking-widest uppercase mb-3">

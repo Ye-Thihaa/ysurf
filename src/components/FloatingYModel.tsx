@@ -46,14 +46,10 @@ const YGlyph = ({ size, variant, opacity = 1 }: YGlyphProps) => {
           <stop offset="0%"   stopColor="rgba(255,255,255,0.08)" />
           <stop offset="100%" stopColor="rgba(255,255,255,0)"    />
         </linearGradient>
-        <filter id={`${gradId}-shadow`}>
-          <feDropShadow dx="0" dy="2" stdDeviation={size*0.03} floodColor="#000" floodOpacity="0.9"/>
-        </filter>
       </defs>
       {[leftArm, rightArm, stem].map((pts, i) => (
         <polygon key={i} points={pts} fill={`url(#${gradId})`} stroke={strokeColor}
-          strokeWidth={isFront ? 1 : 0.4} strokeLinejoin="round"
-          filter={isFront ? `url(#${gradId}-shadow)` : undefined} />
+          strokeWidth={isFront ? 1 : 0.4} strokeLinejoin="round" />
       ))}
       {isFront && (
         <>

@@ -53,13 +53,13 @@ const YGlyph = ({
   const isFront = variant === "front";
   const isBack = variant === "back";
 
-  const faceColor = isFront ? "#1a1a1a" : isBack ? "#0a0a0a" : "#111111";
-  const edgeTopLeft = isFront ? "#3a3a3a" : "#050505";
-  const edgeBotRight = isFront ? "#000000" : "#1f1f1f";
-  const strokeColor = isFront ? "#2a2a2a" : "#181818";
-  const glintColor = isFront
-    ? "rgba(255,255,255,0.12)"
-    : "rgba(255,255,255,0.03)";
+  // Dark fill, white border
+  const faceColor    = isFront ? "#111111" : isBack ? "#080808" : "#0e0e0e";
+  const edgeTopLeft  = isFront ? "#222222" : "#050505";
+  const edgeBotRight = isFront ? "#000000" : "#0a0a0a";
+  const strokeColor  = isFront ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)";
+  const strokeWidth  = isFront ? 1.2 : 0.5;
+  const glintColor   = "rgba(255,255,255,0.15)";
 
   const gradId = `g-${variant}`;
 
@@ -72,79 +72,27 @@ const YGlyph = ({
     >
       <defs>
         <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={edgeTopLeft} />
-          <stop offset="40%" stopColor={faceColor} />
+          <stop offset="0%"   stopColor={edgeTopLeft} />
+          <stop offset="40%"  stopColor={faceColor} />
           <stop offset="100%" stopColor={edgeBotRight} />
         </linearGradient>
-        <linearGradient
-          id={`glint-${variant}`}
-          x1="0%"
-          y1="0%"
-          x2="0%"
-          y2="100%"
-        >
-          <stop offset="0%" stopColor="rgba(255,255,255,0.08)" />
+        <linearGradient id={`glint-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stopColor="rgba(255,255,255,0.06)" />
           <stop offset="100%" stopColor="rgba(255,255,255,0)" />
         </linearGradient>
-        <filter id={`shadow-${variant}`}>
-          <feDropShadow
-            dx="0"
-            dy="2"
-            stdDeviation={size * 0.03}
-            floodColor="#000000"
-            floodOpacity="0.9"
-          />
-        </filter>
       </defs>
 
-      <polygon
-        points={leftArm}
-        fill={`url(#${gradId})`}
-        stroke={strokeColor}
-        strokeWidth={isFront ? 1 : 0.4}
-        strokeLinejoin="round"
-        filter={isFront ? `url(#shadow-${variant})` : undefined}
-      />
-      <polygon
-        points={rightArm}
-        fill={`url(#${gradId})`}
-        stroke={strokeColor}
-        strokeWidth={isFront ? 1 : 0.4}
-        strokeLinejoin="round"
-        filter={isFront ? `url(#shadow-${variant})` : undefined}
-      />
-      <polygon
-        points={stem}
-        fill={`url(#${gradId})`}
-        stroke={strokeColor}
-        strokeWidth={isFront ? 1 : 0.4}
-        strokeLinejoin="round"
-        filter={isFront ? `url(#shadow-${variant})` : undefined}
-      />
+      <polygon points={leftArm}  fill={`url(#${gradId})`} stroke={strokeColor} strokeWidth={strokeWidth} strokeLinejoin="round" />
+      <polygon points={rightArm} fill={`url(#${gradId})`} stroke={strokeColor} strokeWidth={strokeWidth} strokeLinejoin="round" />
+      <polygon points={stem}     fill={`url(#${gradId})`} stroke={strokeColor} strokeWidth={strokeWidth} strokeLinejoin="round" />
 
       {isFront && (
         <>
-          <polygon points={leftArm} fill={`url(#glint-${variant})`} />
+          <polygon points={leftArm}  fill={`url(#glint-${variant})`} />
           <polygon points={rightArm} fill={`url(#glint-${variant})`} />
-          <polygon points={stem} fill={`url(#glint-${variant})`} />
-          <line
-            x1={leftTopX}
-            y1={topPad}
-            x2={leftTopX + armW}
-            y2={topPad}
-            stroke={glintColor}
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <line
-            x1={rightTopX - armW}
-            y1={topPad}
-            x2={rightTopX}
-            y2={topPad}
-            stroke={glintColor}
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
+          <polygon points={stem}     fill={`url(#glint-${variant})`} />
+          <line x1={leftTopX}        y1={topPad} x2={leftTopX + armW} y2={topPad} stroke={glintColor} strokeWidth="1.5" strokeLinecap="round" />
+          <line x1={rightTopX - armW} y1={topPad} x2={rightTopX}     y2={topPad} stroke={glintColor} strokeWidth="1.5" strokeLinecap="round" />
         </>
       )}
     </svg>
@@ -202,30 +150,18 @@ const PixelLogo = ({ size = 120 }: PixelLogoProps) => {
 
       <div className="logo-scene-b">
         <div className="logo-shape-b">
-          <div
-            className="logo-face-b"
-            style={{ transform: `translateZ(${s * 0.08}px)` }}
-          >
+          <div className="logo-face-b" style={{ transform: `translateZ(${s * 0.08}px)` }}>
             <YGlyph size={s} variant="front" />
           </div>
 
-          <div
-            className="logo-face-b back-b"
-            style={{
-              transform: `rotateY(180deg) translateZ(${s * 0.08}px)`,
-            }}
-          >
+          <div className="logo-face-b back-b" style={{ transform: `rotateY(180deg) translateZ(${s * 0.08}px)` }}>
             <YGlyph size={s} variant="back" />
           </div>
 
           {Array.from({ length: 6 }).map((_, i) => {
             const depth = (i / 5) * s * 0.16 - s * 0.08;
             return (
-              <div
-                key={i}
-                className="logo-face-b"
-                style={{ transform: `translateZ(${depth}px)` }}
-              >
+              <div key={i} className="logo-face-b" style={{ transform: `translateZ(${depth}px)` }}>
                 <YGlyph size={s} variant="mid" opacity={0.35} />
               </div>
             );

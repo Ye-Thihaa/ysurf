@@ -1,5 +1,6 @@
 import { GitBranch } from "lucide-react";
 import PixelLogo from "./PixelLogo";
+import { useTheme } from "next-themes";
 
 const Footer = () => {
   return (

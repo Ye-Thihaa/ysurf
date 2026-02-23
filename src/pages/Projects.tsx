@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import AnimatedProjectCard from "@/components/AnimatedProjectCard";
 import FadeInSection from "@/components/FadeInSection";
 import ScrollProgress from "@/components/ScrollProgress";
+import { Helmet } from "react-helmet-async";
 
 const projects = [
   {
@@ -33,6 +34,11 @@ const projects = [
 const Projects = () => {
   return (
     <Layout>
+      <Helmet>
+  <title>Projects | Ysurf</title>
+  <meta name="description" content="Projects by Ysurf — KeyBurm, Fusion 11, Exam Room Generator, and more built with React, TypeScript, and Node.js." />
+  <link rel="canonical" href="https://ysurf.online/projects" />
+</Helmet>
       <ScrollProgress />
       <section className="py-20">
         <div className="container mx-auto px-4">

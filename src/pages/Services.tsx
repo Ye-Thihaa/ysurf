@@ -5,6 +5,7 @@ import Layout from "@/components/Layout";
 import FadeInSection from "@/components/FadeInSection";
 import ScrollProgress from "@/components/ScrollProgress";
 import { animate, stagger } from "animejs";
+import { Helmet } from "react-helmet-async";
 
 // ── Theme hook ────────────────────────────────────────────────────────────────
 const useIsDark = () => {
@@ -294,6 +295,11 @@ const services = [
 const Services = () => {
   return (
     <Layout>
+      <Helmet>
+  <title>Services | Ysurf</title>
+  <meta name="description" content="Web design and development services — UI/UX, React frontends, responsive development, and Vercel deployment." />
+  <link rel="canonical" href="https://ysurf.online/services" />
+</Helmet>
       <ScrollProgress />
 
       {/* ── Hero with 3D orb ───────────────────────────────────────────────── */}

@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Layout from "@/components/Layout";
 import FadeInSection from "@/components/FadeInSection";
 import ScrollProgress from "@/components/ScrollProgress";
+import { Helmet } from "react-helmet-async";
 
 const serviceOptions = [
   { value: "web-development", label: "Web Development" },
@@ -336,6 +337,11 @@ const Appointment = () => {
 
   return (
     <Layout>
+      <Helmet>
+  <title>Book an Appointment | Ysurf</title>
+  <meta name="description" content="Schedule a consultation with Ysurf for web development, UI/UX design, or deployment services." />
+  <link rel="canonical" href="https://ysurf.online/appointment" />
+</Helmet>
       <ScrollProgress />  
       <section className="py-20">
         <div className="container mx-auto px-4">

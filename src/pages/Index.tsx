@@ -10,6 +10,7 @@ import AnimatedProjectCard from "@/components/AnimatedProjectCard";
 import TypewriterText from "@/components/TypeWriterText";
 import ShimmerText from "@/components/ShimmerText";
 import ScrollProgress from "@/components/ScrollProgress";
+import { Helmet } from "react-helmet-async";
 
 const techStack = [
   "React", "TypeScript", "Node.js", "Laravel",
@@ -46,6 +47,11 @@ const featuredProjects = [
 const Index = () => {
   return (
     <Layout>
+      <Helmet>
+  <title>Ysurf | Software Engineer</title>
+  <meta name="description" content="Software Engineer specializing in scalable systems, full-stack development, and clean architecture." />
+  <link rel="canonical" href="https://ysurf.online/" />
+</Helmet>
       <ScrollProgress />
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">

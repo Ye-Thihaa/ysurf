@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import FadeInSection from "@/components/FadeInSection";
 import ScrollProgress from "@/components/ScrollProgress";
+import { Helmet } from "react-helmet-async";
 
 const journey = [
   {
@@ -46,6 +47,11 @@ const journey = [
 const About = () => {
   return (
     <Layout>
+      <Helmet>
+  <title>About | Ysurf</title>
+  <meta name="description" content="Learn how Ysurf went from zero to building full-stack apps — background, journey, and tech stack." />
+  <link rel="canonical" href="https://ysurf.online/about" />
+</Helmet> 
       <ScrollProgress />
 
       {/* ── About Me ──────────────────────────────────────────────────────── */}

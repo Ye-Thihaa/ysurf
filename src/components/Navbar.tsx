@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import FloatingYModel from "./FloatingYModel";
 import { useState, useEffect } from "react";
-import { Sun, Moon } from "lucide-react";
+import Switch from "./Switch";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -15,7 +15,6 @@ const Navbar = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">(() => {
-    // Read from localStorage or default to system preference
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("theme");
       if (stored === "dark" || stored === "light") return stored;
@@ -24,34 +23,38 @@ const Navbar = () => {
     return "light";
   });
 
-  // Apply theme class to <html> and persist
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+  const root = document.documentElement;
 
-  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
+  root.classList.add("theme-transition");
+
+  if (theme === "dark") root.classList.add("dark");
+  else root.classList.remove("dark");
+
+  localStorage.setItem("theme", theme);
+
+  const timeout = setTimeout(() => {
+    root.classList.remove("theme-transition");
+  }, 300);
+
+  return () => clearTimeout(timeout);
+}, [theme]);
+
+  const setThemeFromSwitch = (checked: boolean) => {
+    setTheme(checked ? "dark" : "light");
+  };
 
   return (
     <>
-      {/* Top bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
         <div className="container mx-auto flex items-center justify-between h-14 px-6">
-
-          {/* Logo — always left */}
           <Link to="/" className="flex items-center gap-2" style={{ pointerEvents: "auto" }}>
-            <FloatingYModel size={32} mode="inline" />
+            <FloatingYModel size={24} mode="inline" />
             <span className="font-bold text-base text-foreground tracking-widest uppercase">
               surf
             </span>
           </Link>
 
-          {/* Desktop nav — items right */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => {
               const active = location.pathname === item.path;
@@ -60,9 +63,7 @@ const Navbar = () => {
                   key={item.path}
                   to={item.path}
                   className={`text-xs tracking-widest uppercase transition-colors duration-150 ${
-                    active
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                    active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {item.label}
@@ -70,25 +71,21 @@ const Navbar = () => {
               );
             })}
 
-            {/* Theme toggle — desktop */}
-            <button
-              onClick={toggleTheme}
-              className="text-muted-foreground hover:text-foreground transition-colors duration-150"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
+            {/* Theme switch — desktop */}
+            <Switch
+              checked={theme === "dark"}
+              onChange={setThemeFromSwitch}
+              ariaLabel="Toggle theme"
+            />
           </div>
 
-          {/* Right side — mobile: theme toggle + hamburger */}
           <div className="flex md:hidden items-center gap-4">
-            <button
-              onClick={toggleTheme}
-              className="text-muted-foreground hover:text-foreground transition-colors duration-150"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
+            {/* Theme switch — mobile */}
+            <Switch
+              checked={theme === "dark"}
+              onChange={setThemeFromSwitch}
+              ariaLabel="Toggle theme"
+            />
 
             <button
               onClick={() => setOpen(true)}
@@ -103,7 +100,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Backdrop — mobile only */}
       {open && (
         <div
           className="fixed inset-0 z-50 bg-background/60 backdrop-blur-sm md:hidden"
@@ -111,7 +107,6 @@ const Navbar = () => {
         />
       )}
 
-      {/* Side Drawer — mobile only */}
       <aside
         className={`fixed top-0 right-0 h-full z-50 w-72 bg-background border-l border-border flex flex-col transition-transform duration-300 ease-in-out md:hidden ${
           open ? "translate-x-0" : "translate-x-full"

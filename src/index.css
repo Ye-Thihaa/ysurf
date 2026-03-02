@@ -120,3 +120,10 @@
     @apply transition-transform duration-200 hover:scale-105;
   }
 }
+
+.theme-transition,
+.theme-transition * {
+  transition: background-color 250ms ease,
+              color 250ms ease,
+              border-color 250ms ease !important;
+}

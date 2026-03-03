@@ -24,21 +24,11 @@ const Navbar = () => {
   });
 
   useEffect(() => {
-  const root = document.documentElement;
-
-  root.classList.add("theme-transition");
-
-  if (theme === "dark") root.classList.add("dark");
-  else root.classList.remove("dark");
-
-  localStorage.setItem("theme", theme);
-
-  const timeout = setTimeout(() => {
-    root.classList.remove("theme-transition");
-  }, 300);
-
-  return () => clearTimeout(timeout);
-}, [theme]);
+    const root = document.documentElement;
+    if (theme === "dark") root.classList.add("dark");
+    else root.classList.remove("dark");
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   const setThemeFromSwitch = (checked: boolean) => {
     setTheme(checked ? "dark" : "light");
